@@ -68,21 +68,22 @@ for r in q5:
     for k in r: r[k] = float(r[k])
 # ================= FIGURES =================
 # Fig1: model / three oracles
-fig,ax=plt.subplots(figsize=(7.2,3.6),dpi=600); fig.patch.set_facecolor(BG); ax.set_xlim(0,10); ax.set_ylim(0,5); ax.axis("off"); stars(ax,400)
+fig,ax=plt.subplots(figsize=(7.2,3.9),dpi=600); fig.patch.set_facecolor(BG); ax.set_xlim(0,10); ax.set_ylim(0,5.4); ax.axis("off"); stars(ax,400)
 def box(x,y,w,h,txt,c,fs=8):
     ax.add_patch(FancyBboxPatch((x,y),w,h,boxstyle="round,pad=0.05,rounding_size=0.15",fc=c,ec="white",lw=0.8,alpha=0.95))
     ax.text(x+w/2,y+h/2,txt,ha="center",va="center",color="white",fontsize=fs,fontweight="bold")
-box(0.3,1.6,2.2,1.8,"Auditor\n(classical or\nquantum)","#4b2b8a")
-box(7.5,1.6,2.2,1.8,"Firewall $\\pi$\n(black box)\n$W^d=2^{104}$ headers","#8a2b5c")
+box(0.15,1.75,1.85,1.9,"Auditor\n(classical\nor quantum)","#4b2b8a",fs=7.5)
+box(8.0,1.75,1.85,1.9,"Firewall $\\pi$\n(black box)\n$W^d=2^{104}$\nheaders","#8a2b5c",fs=7.5)
 cols=["#1fb6a3","#f2a63b","#e04c6a"]
-labels=["MQ oracle  $q\\mapsto\\pi(q)$  (classical, one header per query)",
-        "Counter oracle  $q\\mapsto(\\pi(q),\\,\\mathrm{hit}(q))$  = the query is recorded",
-        "Quantum oracle  $O_\\pi|q,b\\rangle=|q,b\\oplus\\pi(q)\\rangle$  (coherent superposition)"]
-for i,(c,l) in enumerate(zip(cols,labels)):
-    y=3.9-i*1.4
-    ax.add_patch(FancyArrowPatch((2.6,y),(7.4,y),arrowstyle="<|-|>",mutation_scale=12,color=c,lw=2))
-    ax.text(5,y+0.22,l,ha="center",va="bottom",color=c,fontsize=7.2)
-ax.text(5,0.25,"Lemma 1: counter oracle $\\equiv$ measurement of the query register  $\\Rightarrow$  no quantum advantage",ha="center",color=FG,fontsize=7.5,style="italic")
+labels=[("MQ oracle  $h\\mapsto\\pi(h)$", "classical: one header per query"),
+        ("Counter oracle  $h\\mapsto(\\pi(h),\\,j(h))$", "the matched rule $j(h)$ is recorded inside the firewall"),
+        ("Quantum oracle  $O_\\pi|h,b\\rangle=|h,b\\oplus\\pi(h)\\rangle$", "coherent superposition of headers")]
+ys=[4.45,2.95,1.45]
+for (c,(l1,l2)),y in zip(zip(cols,labels),ys):
+    ax.add_patch(FancyArrowPatch((2.15,y),(7.85,y),arrowstyle="<|-|>",mutation_scale=12,color=c,lw=2))
+    ax.text(5,y+0.36,l1,ha="center",va="bottom",color=c,fontsize=7.4)
+    ax.text(5,y+0.08,l2,ha="center",va="bottom",color=c,fontsize=6.3,alpha=0.9)
+ax.text(5,0.45,"Lemma 1: counter oracle $\\equiv$ measurement of the query register  $\\Rightarrow$  no quantum advantage",ha="center",color=FG,fontsize=7.5,style="italic")
 save(fig, "fig1_model_oracles.png")
 
 # Fig2: advantage landscape (4 rows)
@@ -113,7 +114,7 @@ for a in ax: dark(a)
 Ns=[r["N"] for r in q1]; ax[0].plot(Ns,[r["classical_expected"] for r in q1],"o-",color="#f2a63b",ms=3,label="classical expected $(N+1)/2$")
 ax[0].plot(Ns,[r["grover_iters"] for r in q1],"s-",color="#1fb6a3",ms=3,label="Grover iterations $\\lfloor\\frac{\\pi}{4}\\sqrt{N}\\rfloor$")
 ax[0].set_xscale("log",base=2); ax[0].set_yscale("log",base=2); ax[0].set_xlabel("$N$ (header-space size)"); ax[0].set_ylabel("queries"); ax[0].legend(fontsize=6,facecolor=BG,labelcolor=FG,edgecolor="#5560a0"); ax[0].set_title("(a) needle: queries vs $N$",fontsize=8)
-N=1024; ks=np.arange(0,60); ax[1].plot(ks,[grover_success(N,1,k) for k in ks],color="#e04c6a",lw=1.4,label="exact statevector, $N=2^{10}$")
+N=1024; ks=np.arange(0,60); ax[1].plot(ks,[grover_success(N,1,k) for k in ks],color="#e04c6a",lw=1.4,label="exact, $N=2^{10}$")
 ax[1].plot(ks,[grover_success(4096,1,k) for k in ks],color="#8f7bff",lw=1.4,label="$N=2^{12}$")
 ax[1].axhline(1,color="#5560a0",lw=0.6); ax[1].set_xlabel("Grover iterations $k$"); ax[1].set_ylabel("P[hit hidden rule]"); ax[1].legend(fontsize=6,facecolor=BG,labelcolor=FG,edgecolor="#5560a0"); ax[1].set_title("(b) success probability oscillates: measure at $k^*$",fontsize=8)
 fig.tight_layout(); save(fig, "fig3_Q1_needle.png")
@@ -124,7 +125,7 @@ ms=[4,16,64,256,1024]
 for W,c in zip([2**16,2**32,2**52],["#1fb6a3","#f2a63b","#e04c6a"]):
     sub=[r for r in q3 if r["W"]==W]
     ax.plot(ms,[r["classical_binsearch"] for r in sub],"o-",color=c,ms=3,label=f"classical binary search, $W=2^{{{int(math.log2(W))}}}$")
-    ax.plot(ms,[0.32*m*math.log2(W) for m in ms],"-",color=c,lw=0.9,alpha=0.8,label=("best quantum algorithm $0.32\\,m\\log_2 W$ [BH08] (thin solid)" if W==2**16 else None))
+    ax.plot(ms,[0.32*m*math.log2(W) for m in ms],"-",color=c,lw=0.9,alpha=0.8,label=("best known quantum algorithm $\\approx 0.32\\,m\\log_2 W$ (thin solid)" if W==2**16 else None))
     ax.plot(ms,[r["quantum_lower_bound"] for r in sub],"--",color=c,lw=1,label=("quantum lower bound, Thm 3 with $\\varepsilon=1/3$ (dashed)" if W==2**16 else None))
 ax.plot(ms,[math.sqrt(m*52) for m in ms],":",color="#8f7bff",lw=1.5,label="hypothetical $\\sqrt{m\\log W}$ (does not exist)")
 ax.set_xscale("log",base=2); ax.set_yscale("log",base=2); ax.set_xlabel("$m$ (rules / boundaries)"); ax.set_ylabel("queries"); ax.legend(fontsize=5.5,ncol=2,facecolor=BG,labelcolor=FG,edgecolor="#5560a0"); ax.set_title("Structure beats superposition: both scale as $m\\log W$ (constant gap only)",fontsize=8)
