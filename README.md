@@ -17,7 +17,7 @@ Everything is small: the whole pipeline runs in about one minute on a laptop.
 | Q5 hidden corner | `run_q1_q3_q5.py` | Grover over an antichain of n = 2^2 … 2^16 candidate cells vs. classical n | `results/Q5_hidden_corner.csv` |
 | Q6a witness | `run_q6.py` | A 4-rule first-match listed-rule policy over [16]² (N = 256, 8 qubits) is compiled into a phase oracle; the implementation shifts one rule edge by t cells; Grover finds a header where the two policies differ (M known), plus the BBHT schedule for unknown M | `results/Q6_real_policy_oracle.csv` |
 | Q6b hidden corner | `run_q6.py` | The eight members of the hidden-corner family H(8) are compiled; the structural lemma (informative headers = the 8 corner cells, antichain) is checked exhaustively; Grover over the 8 corners vs. naive Grover over all 256 headers | `results/Q6_real_policy_oracle.csv` |
-| Figures | `make_figures.py` | Figures 1–6 of the paper and the graphical abstract (600 dpi PNG) | `figures/` |
+| Figures | `make_figures.py` | Figures 1–6 of the paper (600 dpi PNG) | `figures/` |
 
 Q6 success probabilities are computed with the Qiskit Aer statevector simulator **and**
 with an independent numpy statevector implementation; both columns are in the CSV and
@@ -78,7 +78,7 @@ The only randomised part is the BBHT schedule in Q6a, which uses a fixed seed.
 run_all.py            run everything
 run_q1_q3_q5.py       Q1, Q3, Q5 (numpy only)
 run_q6.py             Q6a, Q6b (Qiskit Aer + numpy)
-make_figures.py       Figures 1-6 and graphical abstract
+make_figures.py       Figures 1-6
 qfa/core.py           ListedRule policy engine, Grover simulators, hidden-corner family H(n)
 qfa/paths.py          output directories (results/, figures/)
 requirements.txt
