@@ -2,8 +2,7 @@
 
 Outputs (600 dpi PNG) in figures/:
   fig1_model_oracles.png, fig2_advantage_landscape.png, fig3_Q1_needle.png,
-  fig4_Q3_structure.png, fig5_Q5_hidden_corner.png, fig6_Q6_real_oracle.png,
-  graphical_abstract_1300x600.png, graphical_abstract_2600x1200.png
+  fig4_Q3_structure.png, fig5_Q5_hidden_corner.png, fig6_Q6_real_oracle.png
 fig6 requires results/Q6_real_policy_oracle.csv (run_q6.py); it is skipped otherwise.
 """
 import csv
@@ -156,19 +155,6 @@ ax2.plot(ns,[math.log2(1<<16) for _ in ns],"--",color="#8f7bff",lw=1.2,label="tr
 ax2.set_xscale("log",base=2); ax2.set_yscale("log",base=2); ax2.set_xlabel("$n$ (antichain width, $n \\leq W$)"); ax2.set_ylabel("queries to localise one rule"); ax2.legend(fontsize=5.5,facecolor=BG,labelcolor=FG,edgecolor="#5560a0",loc="upper left"); ax2.set_title("(b) per-rule cost: overlapping list vs tree",fontsize=8)
 fig.tight_layout(); save(fig, "fig5_Q5_hidden_corner.png")
 
-# Graphical abstract 1300x600
-fig=plt.figure(figsize=(13,6),dpi=100); fig.patch.set_facecolor(BG); ax=fig.add_axes([0,0,1,1]); ax.set_xlim(0,13); ax.set_ylim(0,6); ax.axis("off"); stars(ax,900,7)
-ax.text(6.5,5.45,"When Measurement Kills the Speedup",ha="center",color="white",fontsize=26,fontweight="bold")
-ax.text(6.5,4.85,"Quantum query complexity of black-box firewall auditing",ha="center",color="#c9cff5",fontsize=15)
-cells=[("Needle","$\\Theta(N)\\to\\Theta(\\sqrt{N})$","full",cmap(0.85)),("Witness","$\\Theta(N/M)\\to\\Theta(\\sqrt{N/M})$","full",cmap(0.85)),("Certificate","$\\Theta(m)\\to\\Theta(\\sqrt{m})$","partial",cmap(0.5)),("Structure","$\\Theta(m\\log W)\\to\\Omega(m\\log W)$","none",cmap(0.15))]
-for i,(t,f,a,c) in enumerate(cells):
-    x=0.5+i*3.1
-    ax.add_patch(FancyBboxPatch((x,1.3),2.8,2.9,boxstyle="round,pad=0.05,rounding_size=0.3",fc=c,ec="white",lw=1.2,alpha=0.92))
-    ax.text(x+1.4,3.7,t,ha="center",color="white",fontsize=17,fontweight="bold")
-    ax.text(x+1.4,2.75,f,ha="center",color="white",fontsize=13)
-    ax.text(x+1.4,1.75,"quantum gain: "+a,ha="center",color="white",fontsize=11,style="italic")
-ax.text(6.5,0.55,"Counter oracle = measurement  ⇒  classical.   Structure = ordered search  ⇒  no $\\sqrt{\\;}$.   Quantum helps only where classical is hardest.",ha="center",color=FG,fontsize=11.5)
-fig.savefig(str(FIGURES / "graphical_abstract_1300x600.png"), dpi=100, facecolor=BG); fig.savefig(str(FIGURES / "graphical_abstract_2600x1200.png"), dpi=200, facecolor=BG); plt.close(fig); print("wrote graphical abstracts")
 # ---- Fig 6: Q6 ----
 rows=read_csv("Q6_real_policy_oracle.csv")
 if rows is None:
