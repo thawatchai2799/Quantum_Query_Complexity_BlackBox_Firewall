@@ -36,18 +36,19 @@ def run_q1(results):
 
 
 def run_q3(results):
-    """Classical binary search vs. best known quantum ordered search (~0.32 m log2 W)
-    vs. the adversary/direct-sum lower bound with error 1/3:
-    (1 - 2 sqrt(eps(1-eps)))/2 * m * (ln W - 1)/pi."""
+    """Classical binary search vs. the best known exact quantum ordered search
+    (4 log_605 W ~ 0.433 log2 W queries per boundary; exact, so m instances compose
+    without error amplification) vs. the adversary/direct-sum lower bound with error 1/3:
+    (1 - 2 sqrt(eps(1-eps))) * m * (ln W - 1)/pi  (Spalek-Szegedy normalisation of the adversary bound)."""
     rows = []
     eps = 1.0 / 3.0
-    pref = (1 - 2 * math.sqrt(eps * (1 - eps))) / 2
+    pref = 1 - 2 * math.sqrt(eps * (1 - eps))
     for log2W in [8, 16, 32, 52]:
         W = 2 ** log2W
         for m in [4, 16, 64, 256, 1024]:
             classical = m * log2W
             q_lower = pref * m * (math.log(W) - 1) / math.pi
-            q_best = 0.32 * m * log2W
+            q_best = 4.0 * math.log(W, 605) * m
             rows.append({"W": W, "log2W": log2W, "m": m,
                          "classical_binsearch": classical,
                          "quantum_best_known": q_best,

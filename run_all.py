@@ -1,6 +1,6 @@
 """Run every experiment and regenerate every figure.
 
-    python run_all.py            # Q1/Q3/Q5 (seconds) + Q6 (~1 min) + all figures
+    python run_all.py            # Q1/Q3/Q5 (seconds) + Q6 (~1 min) + Q7 (seconds) + all figures
     python run_all.py --no-q6    # skip the Qiskit/Q6 part
 
 Works from any current directory; paths are resolved relative to this file.
@@ -24,5 +24,6 @@ if __name__ == "__main__":
     run("run_q1_q3_q5.py")
     if "--no-q6" not in sys.argv:
         run("run_q6.py")
+    run("run_q7.py")
     run("make_figures.py")
     print("done - see results/ and figures/")

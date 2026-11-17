@@ -72,7 +72,7 @@ def bbht_expected_queries(marked, nq, trials=2000, seed=0):
     iterations is taken from the exact statevector, so only the schedule is random."""
     rng = np.random.default_rng(seed)
     n = 2 ** nq
-    total = 0
+    samples = []
     for _ in range(trials):
         lam, m, queries = 6.0 / 5.0, 1.0, 0
         while True:
@@ -81,8 +81,9 @@ def bbht_expected_queries(marked, nq, trials=2000, seed=0):
             if rng.random() < grover_success_statevector(n, marked, j):
                 break
             m = min(lam * m, math.sqrt(n))
-        total += queries
-    return total / trials
+        samples.append(queries)
+    samples = np.asarray(samples, dtype=float)
+    return float(samples.mean()), float(samples.std(ddof=1) / math.sqrt(trials))
 
 
 def spec_policy():
@@ -97,7 +98,7 @@ def impl_policy(t):
 
 
 COLUMNS = ["exp", "case", "N", "M", "k_star", "sqrt_N_over_M", "p_success_qiskit",
-           "p_success_numpy", "classical_expected", "bbht_expected_queries",
+           "p_success_numpy", "classical_expected", "bbht_expected_queries", "bbht_standard_error",
            "naive_k_star", "naive_p_qiskit", "naive_p_numpy", "naive_classical_expected"]
 
 
@@ -131,11 +132,12 @@ def main():
     for t in [1, 4, 12]:
         marked = np.flatnonzero(impl_policy(t).table() ^ sigma)
         M = len(marked)
-        eq = bbht_expected_queries(marked, NQ)
+        eq, sem = bbht_expected_queries(marked, NQ)
         rows.append({"exp": "Q6a-BBHT", "case": "rule2 y-edge +%d (M unknown)" % t,
                      "N": N, "M": M, "sqrt_N_over_M": math.sqrt(N / M),
-                     "classical_expected": (N + 1) / (M + 1), "bbht_expected_queries": eq})
-        print("Q6a-BBHT t=%2d  M=%3d  E[queries]=%.3f" % (t, M, eq))
+                     "classical_expected": (N + 1) / (M + 1), "bbht_expected_queries": eq,
+                     "bbht_standard_error": sem})
+        print("Q6a-BBHT t=%2d  M=%3d  E[queries]=%.3f +/- %.3f (standard error, 2000 runs)" % (t, M, eq, sem))
 
     # ---------------- Q6b: hidden corner
     n = 8
